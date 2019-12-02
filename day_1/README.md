@@ -2,10 +2,6 @@
 
 Puzzle site: https://adventofcode.com/2019/day/1
 
-# Installation
-
-`pipenv install`
-
 # Puzzle - Part 1
 
 The Elves quickly load you into a spacecraft and prepare to launch.
