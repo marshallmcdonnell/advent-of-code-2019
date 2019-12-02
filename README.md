@@ -3,3 +3,8 @@
 # advent-of-code-2019
 
 Code samples for [Advent of Code 2019](https://adventofcode.com/)
+
+# To install
+
+1) Run `pipenv install`
+2) Go into each day to get instructions on running individual solutions
