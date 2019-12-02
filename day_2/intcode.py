@@ -3,31 +3,31 @@ import operator
 from functools import reduce
 
 
-class UnknownOpCode(Exception):
-    ''' Raise if we come accross an unknown OPCODE '''
+class UnknownInstruction(Exception):
+    ''' Raise if we come accross an unknown INSTRUCTION '''
 
 
 class IntCode:
-    ''' IntCode class for computing series of OpCodes '''
+    ''' IntCode class for computing series of Instructions '''
 
-    # OPCODES
+    # INSTRUCTIONS
     ADD = 1
     MULTIPLY = 2
     HALT = 99
-    OPCODE_CHOICES = [str(x) for x in [ADD, MULTIPLY, HALT]]
+    INSTRUCTION_CHOICES = [str(x) for x in [ADD, MULTIPLY, HALT]]
 
     def __init__(self, command_list, stride=4):
-        ''' Initialize object of IntCode with opcode command list
+        ''' Initialize object of IntCode with instruction command list
         and a stride for the command length (default: 4)
-        :param command_list: List of opcodes to execute
+        :param command_list: List of instructions to execute
         :type command_list: list[int]
         :param stride: Length of the commands with structure:
-                       [opcode, pos1, pos2, ..., output_position]
+                       [instruction, pos1, pos2, ..., output_position]
         :type stride: int
         '''
         self._stride = stride
-        self._input = [int(x) for x in command_list]
-        self._number_of_commands = int(len(self._input) / stride) + 1
+        self._memory = [int(x) for x in command_list]
+        self._number_of_commands = int(len(self._memory) / stride) + 1
 
     @staticmethod
     def product(value_list):
@@ -41,7 +41,7 @@ class IntCode:
 
     def _create_list_from_positions(self, positions):
         ''' Create a value list from a list of positions in the commands
-        list (ie IntCode._input)
+        list (ie IntCode._memory)
         :param positions: List of positions to create value list from
         :type positions: list[int]
         :return: List of values that correspond to the positions
@@ -49,7 +49,7 @@ class IntCode:
         '''
         value_list = []
         for p in positions:
-            value = self._input[p]
+            value = self._memory[p]
             value_list.append(value)
         return value_list
 
@@ -63,7 +63,7 @@ class IntCode:
         :type output_position: int
         '''
         value_list = self._create_list_from_positions(positions)
-        self._input[output_position] = sum(value_list)
+        self._memory[output_position] = sum(value_list)
 
     def _run_multiply(self, positions, output_position):
         ''' Multiply the values together that are at the positions given
@@ -75,11 +75,11 @@ class IntCode:
         :type output_position: int
         '''
         value_list = self._create_list_from_positions(positions)
-        self._input[output_position] = self.product(value_list)
+        self._memory[output_position] = self.product(value_list)
 
     def _output(self):
         ''' Return current command list as a comma-separated string '''
-        return ",".join([str(x) for x in self._input])        
+        return ",".join([str(x) for x in self._memory])        
 
     def run_commands(self):
         ''' Run the commands input into IntCode object and return
@@ -88,32 +88,32 @@ class IntCode:
         for i in range(self._number_of_commands):
             start = i * self._stride
             stop = start + self._stride
-            command = self._input[start:stop]
+            command = self._memory[start:stop]
 
-            opcode = command[0]
-            positions = command[1:-1]
+            instruction = command[0]
+            parameters = command[1:-1]
             output_position = command[-1]
 
-            if opcode == self.ADD:
-                self._run_add(positions, output_position)
+            if instruction == self.ADD:
+                self._run_add(parameters, output_position)
 
-            elif opcode == self.MULTIPLY:
-                self._run_multiply(positions, output_position)
+            elif instruction == self.MULTIPLY:
+                self._run_multiply(parameters, output_position)
 
-            elif opcode == self.HALT:
+            elif instruction == self.HALT:
                 return self._output()
 
             else:
-                msg = "Unknown OPCODE: {} Choices: {}"
-                msg = msg.format(opcode, ','.join(self.OPCODE_CHOICES))
-                raise UnknownOpCode(msg)
+                msg = "Unknown INSTRUCTION: {} Choices: {}"
+                msg = msg.format(instruction, ','.join(self.INSTRUCTION_CHOICES))
+                raise UnknownInstruction(msg)
 
 
 if __name__ == "__main__":
     # Parse CLI arguements
     parser = argparse.ArgumentParser()
     parser.add_argument("input_file", type=str,
-                        help="Input file with list of opcodes.")
+                        help="Input file with list of instructions.")
     parser.add_argument("--part", type=int, default=1,
                         choices=[1, 2],
                         help="Either sovling part 1 or part 2 of problem")
@@ -124,14 +124,29 @@ if __name__ == "__main__":
         contents = f.readline()
     code = [int(x.strip()) for x in contents.split(',')]
 
-    if arg.part == 1:
+    if args.part == 1:
         # Initialize IntCode object
         intcode = IntCode(code)
 
         # Replace the values per the instructions
-        intcode._input[1] = 12
-        intcode._input[2] = 2
+        intcode._memory[1] = 12
+        intcode._memory[2] = 2
 
         # Print output to screen for the solution
         print("Output: {}".format(intcode.run_commands()))
+
+    if args.part == 2:
+        target = 19690720
+
+        span = range(0,100)
+        for noun in span:
+            for verb in span:
+                intcode = IntCode(code)
+                intcode._memory[1] = noun
+                intcode._memory[2] = verb
+
+                intcode.run_commands()
+
+                if intcode._memory[0] == target:
+                    print("Hit target!!! Noun: {} Verb: {} 100*Noun+Verb: {}".format(noun, verb, 100*noun+verb))
 

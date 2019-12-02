@@ -1,5 +1,5 @@
 import pytest
-from intcode import IntCode, UnknownOpCode
+from intcode import IntCode, UnknownInstruction
 
 
 def test_construction():
@@ -8,13 +8,13 @@ def test_construction():
     assert intcode.ADD == 1
     assert intcode.MULTIPLY == 2
     assert intcode.HALT == 99
-    assert intcode.OPCODE_CHOICES == ['1', '2', '99']
+    assert intcode.INSTRUCTION_CHOICES == ['1', '2', '99']
     assert intcode._stride == 4
     assert intcode._number_of_commands == 2
 
-    assert intcode._input == input_code
+    assert intcode._memory == input_code
     input_code[0] = 9
-    assert intcode._input != input_code
+    assert intcode._memory != input_code
 
 
 def test_product():
@@ -37,7 +37,7 @@ def test_run_add_simple():
     positions = [pos1, pos2]
 
     intcode._run_add(positions, output_position)
-    assert intcode._input == [1, 0, 0, 2, 99]
+    assert intcode._memory == [1, 0, 0, 2, 99]
 
 
 def test_run_add_complex():
@@ -50,7 +50,7 @@ def test_run_add_complex():
     positions = [pos1, pos2]
 
     intcode._run_add(positions, output_position)
-    assert intcode._input == [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
+    assert intcode._memory == [1, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
 
 
 def test_run_multiply_simple():
@@ -63,7 +63,7 @@ def test_run_multiply_simple():
     positions = [pos1, pos2]
 
     intcode._run_multiply(positions, output_position)
-    assert intcode._input == [3, 0, 0, 9, 99]
+    assert intcode._memory == [3, 0, 0, 9, 99]
 
 
 def test_run_multiply_complex():
@@ -76,7 +76,7 @@ def test_run_multiply_complex():
     positions = [pos1, pos2]
 
     intcode._run_multiply(positions, output_position)
-    assert intcode._input == [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
+    assert intcode._memory == [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
 
 
 def test_output():
@@ -89,45 +89,45 @@ def test_run_commands_complex():
     input_code = [1, 9, 10, 3, 2, 3, 11, 0, 99, 30, 40, 50]
     intcode = IntCode(input_code)
     intcode.run_commands()
-    assert intcode._input == [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
+    assert intcode._memory == [3500, 9, 10, 70, 2, 3, 11, 0, 99, 30, 40, 50]
 
 
 def test_run_commands_simple_test_0():
     input_code = [1, 0, 0, 3, 99]
     intcode = IntCode(input_code)
     intcode.run_commands()
-    assert intcode._input == [1, 0, 0, 2, 99]
+    assert intcode._memory == [1, 0, 0, 2, 99]
 
 
 def test_run_commands_simple_test_1():
     input_code = [1,0,0,0,99]
     intcode = IntCode(input_code)
     intcode.run_commands()
-    assert intcode._input == [2,0,0,0,99]
+    assert intcode._memory == [2,0,0,0,99]
 
 
 def test_run_commands_simple_test_2():
     input_code = [2,3,0,3,99]
     intcode = IntCode(input_code)
     intcode.run_commands()
-    assert intcode._input == [2,3,0,6,99]
+    assert intcode._memory == [2,3,0,6,99]
 
 
 def test_run_commands_simple_test_3():
     input_code = [2,4,4,5,99,0]
     intcode = IntCode(input_code)
     intcode.run_commands()
-    assert intcode._input == [2,4,4,5,99,9801]
+    assert intcode._memory == [2,4,4,5,99,9801]
 
 
 def test_run_commands_simple_test_4():
     input_code = [1,1,1,4,99,5,6,0,99]
     intcode = IntCode(input_code)
     intcode.run_commands()
-    assert intcode._input == [30,1,1,4,2,5,6,0,99]
+    assert intcode._memory == [30,1,1,4,2,5,6,0,99]
 
-def test_run_commands_invalid_opcode():
+def test_run_commands_invalid_instruction():
     input_code = [5,0,0,0,99]
     intcode = IntCode(input_code)
-    with pytest.raises(UnknownOpCode):
+    with pytest.raises(UnknownInstruction):
         intcode.run_commands()
