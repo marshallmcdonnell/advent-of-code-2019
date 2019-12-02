@@ -1,3 +1,4 @@
+import argparse
 import math
 
 
@@ -32,3 +33,17 @@ def fuel_counter_upper_summation(masses):
         output.append(fuel)
 
     return sum(output)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("input_file",
+                        help="Input file with list of module masses.")
+    args = parser.parse_args()
+
+    with open(args.input_file, 'r') as f:
+        contents = f.readlines()
+
+    masses = [float(x.strip()) for x in contents]
+    fuel = fuel_counter_upper_summation(masses)
+    print("Total fuel required: {}".format(fuel))
