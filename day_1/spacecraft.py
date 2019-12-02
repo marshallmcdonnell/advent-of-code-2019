@@ -70,6 +70,7 @@ def fuel_counter_upper_summation(masses, recursive=False):
 
 
 if __name__ == "__main__":
+    # Parse CLI arguements
     parser = argparse.ArgumentParser()
     parser.add_argument("input_file", type=str,
                         help="Input file with list of module masses.")
@@ -78,15 +79,17 @@ if __name__ == "__main__":
                         help="Either sovling part 1 or part 2 of problem")
     args = parser.parse_args()
 
+    # Read in input file with list of masses and parse
     with open(args.input_file, 'r') as f:
         contents = f.readlines()
-
     masses = [float(x.strip()) for x in contents]
 
+    # Determine if we are solving Part I or Part II of the problem
     if args.part == 1:
         recursive = False
     elif args.part == 2:
         recursive = True
 
+    # Calculate and output solution to problem
     fuel = fuel_counter_upper_summation(masses, recursive=recursive)
     print("Total fuel required: {}".format(fuel))
