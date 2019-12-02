@@ -8,3 +8,8 @@ Code samples for [Advent of Code 2019](https://adventofcode.com/)
 
 1) Run `pipenv install`
 2) Go into each day to get instructions on running individual solutions
+
+# To test (all tests)
+
+1) Install
+2) Run `pipenv run pytest`
