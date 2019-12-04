@@ -2,6 +2,7 @@ import pytest
 
 from wire import Wire, UnknownDirectionException, InvalidInstructionFormat
 
+
 def test_construction():
     wire = Wire()
     assert wire.RIGHT == 'R'
@@ -51,10 +52,11 @@ def test_direction_to_point():
         wire = Wire()
         wire._direction_to_point('Q')
 
+
 def test_points_from_single_instruction():
     wire = Wire()
     wire._extend_points_from_single_instruction("U2")
-    assert wire.points == [(0,0), (0,1), (0,2)]
+    assert wire.points == [(0, 0), (0, 1), (0, 2)]
 
     wire = Wire()
     with pytest.raises(InvalidInstructionFormat):
@@ -72,8 +74,8 @@ def test_points_from_single_instruction():
 def test_points_from_instructions():
     wire = Wire()
     wire.extend_points_from_instructions("U2")
-    assert wire.points == [(0,0), (0,1), (0,2)]
+    assert wire.points == [(0, 0), (0, 1), (0, 2)]
 
     wire = Wire()
     wire.extend_points_from_instructions("U2,R2")
-    assert wire.points == [(0,0), (0,1), (0,2), (1,2), (2,2)]
+    assert wire.points == [(0, 0), (0, 1), (0, 2), (1, 2), (2, 2)]
