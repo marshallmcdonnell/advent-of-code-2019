@@ -122,7 +122,7 @@ class Wire:
     def instructions(self, instructions):
         ''' Sets the instructions and corresponding points to the Wire '''
         self._instructions = instructions
-        self._points = self.extend_points_from_instructions(instructions)
+        self.extend_points_from_instructions(instructions)
 
     @property
     def points(self):

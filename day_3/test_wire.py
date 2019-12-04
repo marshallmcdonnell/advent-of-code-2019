@@ -18,16 +18,17 @@ def test_construction():
 
 
 def test_construction_with_instructions():
-    instructions = "U2,L2"
+    target = [(0,0), (0,1), (0,2), (1,2), (2,2)]
+    instructions = "U2,R2"
+
     wire = Wire(instructions)
     assert wire.instructions == instructions
-    #  assert wire.points == [(1,0), (2,0), (2,1), (2,2)]
+    assert wire.points == target
 
-    instructions = "U2,L2"
     wire = Wire()
     wire.instructions = instructions
     assert wire.instructions == instructions
-    #  assert wire.points == [(1,0), (2,0), (2,1), (2,2)]
+    assert wire.points == target
 
 
 def test_add_points():
