@@ -45,3 +45,13 @@ def test_closest_intersection_distance(wire_one, wire_two):
     wires = [wire_one, wire_two]
     grid = Grid(wires)
     assert grid.closest_intersection_distance == 6
+
+def test_closest_combined_step_intersection(wire_one, wire_two):
+    wires = [wire_one, wire_two]
+    grid = Grid(wires)
+    assert grid.closest_combined_step_intersection() == (6,5)
+
+def test_closest_combined_step_distance(wire_one, wire_two):
+    wires = [wire_one, wire_two]
+    grid = Grid(wires)
+    assert grid.closest_combined_step_intersection() == 30
