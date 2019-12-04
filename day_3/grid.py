@@ -1,4 +1,5 @@
 import argparse
+import itertools
 
 from wire import Wire
 
@@ -26,18 +27,20 @@ class Grid:
         series = [ abs(p - q) for p, q in zip(point1, point2)]
         return sum(series)
 
+    @staticmethod
+    def combined_step_distance(point, points):
+        print(points.index(point))
+        return points.index(point)
+
     def _compute_intersections(self):
         '''Compute the intesections of all Wires on Grid '''
         # Check each wire against all others for intersections
-        for w1 in self.wires:
-            for w2 in self.wires:
-                if w1 == w2:
-                    continue
-                intersections = []
-                for i, p in enumerate(w1.points):
-                    print("   Point {} of {}".format(i, len(w1.points)))
-                    if p in w2.points:
-                        intersections.append(p)
+        for w1, w2 in itertools.combinations(self.wires, 2):
+            intersections = []
+            for i, p in enumerate(w1.points):
+                print("   Point {} of {}".format(i, len(w1.points)))
+                if p in w2.points:
+                    intersections.append(p)
 
         # Remove origin point since will always be an intersection
         intersections.remove((0,0))
@@ -103,6 +106,17 @@ class Grid:
         intersection, distance = self._compute_closest_intersection()
         return distance
 
+    @property
+    def closest_combined_step_distance(self):
+        combined_step_per_intersection = []
+        for point in self.intersections:
+            distances = []
+            for wire in self.wires:
+                distance = self.combined_step_distance(point, wire.points)
+                distances.append(distance)
+            combined_step_per_intersection.append(sum(distances))
+        return min(combined_step_per_intersection)
+
 
 if __name__ == "__main__":
     # Parse CLI arguements
@@ -125,6 +139,12 @@ if __name__ == "__main__":
     assert len(wires) == 2
     
     grid = Grid(wires)
-    msg = "Closest intersection: {} Distance: {}"
-    msg = msg.format(grid.closest_intersection, grid.closest_intersection_distance)
-    print(msg)
+    if args.part == 1:
+        msg = "Closest intersection: {} Distance: {}"
+        msg = msg.format(grid.closest_intersection, grid.closest_intersection_distance)
+        print(msg)
+
+    elif args.part == 2:
+        msg = "Closest combined step distance: {}"
+        msg = msg.format(grid.closest_combined_step_distance)
+        print(msg)
